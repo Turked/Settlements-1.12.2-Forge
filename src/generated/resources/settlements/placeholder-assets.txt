@@ -1,7 +1,0 @@
-Settlements placeholder references (no original artwork or geometry).
-settlement_flag blockstate -> minecraft:white_wool
-settlement_flag inventory model -> minecraft:block/white_wool
-dev_tool icon -> minecraft:items/blaze_rod
-NPCs -> EntitySettler uses the existing vanilla villager renderer and texture
-planner -> existing Minecraft GUI and item sprites
-Override corresponding generated paths using src/main/resources.

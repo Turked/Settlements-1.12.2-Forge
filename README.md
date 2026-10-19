@@ -36,20 +36,23 @@ Raids and wars are off by default. Xaero's map support is on hold for now.
 
 **Current state**
 
-Still in development. The build and automated checks pass, and the mod has passed an isolated RLCraft loading test. Full in-game and multiplayer testing is still needed.
+Still in development. Recorded build, automated check, and isolated RLCraft loading results are in the [verification record](docs/Verification.md). Full in-game and multiplayer testing is still needed.
 
 The flag, tools, and NPCs use existing Minecraft art for now. Those references can be swapped out when the final assets are ready.
 
 **Working on the mod**
 
-Use a **Java 8 JDK** and the included Gradle wrapper. Install the same mod jar on the server and clients.
+Use a **Java 8 JDK** and the included Gradle wrapper. In IntelliJ, select Java 8 for both the Project SDK and Gradle JVM. In a PowerShell terminal, set `JAVA_HOME` to your JDK 8 folder for that session, then run:
 
 ```powershell
-.\tools\Build.ps1
-.\tools\Build.ps1 -Tasks genIntellijRuns
+$env:JAVA_HOME = 'C:\path\to\jdk8'
+.\gradlew.bat build
+.\gradlew.bat genIntellijRuns
 ```
 
-Resource files come from Java DataGen. Edit the generator and run `tools/Build.ps1 -Tasks runData` instead of editing generated JSON.
+The installable jar is `build/libs/Settlements-0.1.0.jar`; install the same jar on the server and clients.
+
+Resource files come from Java DataGen. Edit the generator and run `.\gradlew.bat runData` instead of editing generated JSON. The build also regenerates resources automatically.
 
 - [Setup, configuration, and feature details](docs/Guide.md)
 - [Testing checklist](docs/Verification.md)

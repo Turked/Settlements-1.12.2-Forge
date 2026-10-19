@@ -27,6 +27,3 @@ mcmodsrepo
 
 # Files from Forge MDK
 forge*changelog.txt
-
-# Personal maintenance files
-/.local-tools/

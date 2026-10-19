@@ -4,19 +4,20 @@ A Minecraft **1.12.2** Forge mod by **MechGaming**, targeting **RLCraft 2.9.3** 
 
 ## Build and DataGen
 
-Run these commands from this project in PowerShell:
+Install a **Java 8 JDK**. In IntelliJ, set both the Project SDK and Gradle JVM to Java 8. From the project folder in PowerShell, set `JAVA_HOME` to that JDK for the terminal session and use the included wrapper:
 
 ```powershell
-.\tools\Build.ps1
-.\tools\Build.ps1 -Tasks runData
-.\tools\Build.ps1 -Tasks genIntellijRuns
+$env:JAVA_HOME = 'C:\path\to\jdk8'
+.\gradlew.bat build
+.\gradlew.bat runData
+.\gradlew.bat genIntellijRuns
 ```
 
-The build creates `build/libs/Settlements-0.1.0.jar`. `runData` is an alias for `generateResources`. `build` regenerates resources and runs the verification tasks automatically. `tools/Build.ps1` selects an installed Java 8 JDK for this command and restores the previous environment afterwards. It also accepts `-JavaHome` for another Java 8 installation.
+The build creates `build/libs/Settlements-0.1.0.jar`, regenerates resources, and runs the automated verification tasks. `runData` runs DataGen by itself; it is an alias for `generateResources`. After `genIntellijRuns` completes, use the generated `runClient` configuration in IntelliJ.
 
-Minecraft 1.12.2 predates the modern Forge DataGenerator API and native item/block tags. `src/datagen/java/.../SettlementsDataGenerator.java` is the Java 8 DataGen entry point. It generates metadata, the flag recipe, item/model references, blockstates, `en_us.lang`, and a default NPC definition into `src/generated/resources`. Do not edit generated files. Edit the generator or provide an intentional override under `src/main/resources` instead. No unused tag files are generated.
+Minecraft 1.12.2 predates the modern Forge DataGenerator API and native item/block tags. `src/datagen/java/com/MechGaming/settlements/datagen/SettlementsDataGenerator.java` is the Java 8 DataGen entry point. It generates metadata, the flag recipe, item/model references, blockstates, `en_us.lang`, and a default NPC definition into `src/generated/resources`. Do not edit generated files. Edit the generator or provide an intentional override under `src/main/resources` instead. No unused tag files are generated.
 
-The generator references Minecraft's existing white wool model and blaze rod sprite. The `settlements:settler` entity extends the vanilla villager and uses its existing renderer and artwork, with definition-controlled trades. There are no authored textures or 3D meshes. Raw artwork and media belong in the external Settlements_Assets directory provided by the project owner; only finished runtime overrides belong in `src/main/resources/assets/settlements`.
+The generator references Minecraft's existing white wool model and blaze rod sprite. The `settlements:settler` entity extends the vanilla villager and uses its existing renderer and artwork, with definition-controlled trades. There are no original textures or 3D meshes. Finished runtime art overrides belong in `src/main/resources/assets/settlements`.
 
 ## Start a settlement
 
@@ -42,7 +43,7 @@ Later zones override earlier zones in overlapping columns. Build-zone rules can 
 
 ## NPC housing
 
-Build an enclosed room inside a claim, including a closed wooden door, a bed and a chest. Minecraft 1.12.2 has no vanilla barrel, so the default definition uses a chest. Stand in its empty interior and use `/settlements room add settler`, or register it in the settlement menu. Bounded room scans check requirements; valid rooms attract named vanilla villager placeholders with configured trades. The system rechecks rooms periodically, removes residents from invalid rooms and delays replacements after a resident dies.
+Build an enclosed room inside a claim, including a closed wooden door, a bed and a chest. Minecraft 1.12.2 has no vanilla barrel, so the default definition uses a chest. Stand in its empty interior and use `/settlements room add settler`, or register it in the settlement menu. Bounded room scans check requirements; valid rooms attract named settler villagers with configured trades. The system rechecks rooms periodically, removes residents from invalid rooms and delays replacements after a resident dies.
 
 The default definition is generated and copied to `config/settlements/npcs/settler.json` on first startup. Add new definition outputs in the Java DataGen source to author additional NPCs without handwriting JSON. Definitions support installed registry IDs, room size, required blocks, trades and optional small block arrangements. NPC definitions are loaded after registration so installed mod items and blocks can be used. Generated defaults never overwrite an existing server definition.
 
@@ -72,6 +73,6 @@ Optional annexation must be included in the original offer and accepted by both 
 
 Settlement and feature records are saved in the overworld's `WorldSavedData`, with explicit dimension IDs. Membership and permission decisions are server-side. Commands and client requests use the same validated service. Clients cannot directly declare ownership, consume resources, or edit operator settings.
 
-There are no required RLCraft-mod dependencies, coremods, mixins, global replacement AI, or Xaero integration. Xaero integration was explicitly deferred by the project owner. Existing RLCraft crafting and HUD mods remain independent; key conflicts should be resolved in the profile's Controls screen.
+There are no required RLCraft-mod dependencies, coremods, mixins, global replacement AI, or Xaero integration. Existing RLCraft crafting and HUD mods remain independent; resolve key conflicts in the profile's Controls screen.
 
-`tools/SmokeTest-Forge.ps1` performs an isolated Forge 2860 production mod-lifecycle test using locally installed libraries. Its test-only LaunchWrapper target constructs an unstarted server and runs Forge construction, pre-init, init and post-init. It copies test inputs into `build`, leaves the actual RLCraft instance unchanged and starts no world or network listener. Add `-WithRLCraft` to include copies of the local pack's mods/configs. This verifies loading, registry freezing and generated NPC resource installation, **not** live gameplay, server-starting callbacks or multiplayer. See `docs/Verification.md` for the validation record and remaining interactive checks.
+Earlier Forge and RLCraft initialization tests used external developer tools; they are not part of the Gradle build. See [Verification.md](Verification.md) for the tested scope and remaining in-game checks.

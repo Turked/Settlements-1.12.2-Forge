@@ -8,6 +8,6 @@
 - Added room-based NPC definitions and trades with a vanilla-rendered settler entity.
 - Added optional tagged raids, explicit blueprints, inventory repair and bounded event restoration.
 - Added consensual war rosters, lives/bed objectives, inventory wagers, annexation and scoped ghost protection.
-- Added persistence/network/policy checks and an isolated Forge 2860 lifecycle harness.
+- Added persistence/network/policy checks. Validated Forge 2860 and RLCraft initialization separately with external developer tools.
 
 Full live-world RLCraft and multiplayer release checks remain listed in `docs/Verification.md`.
