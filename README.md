@@ -54,12 +54,10 @@ Resource files come from Java DataGen. Edit the generator and run `tools/Build.p
 - [Setup, configuration, and feature details](docs/Guide.md)
 - [Testing checklist](docs/Verification.md)
 
-My GitHub setup notes are in Obsidian under **Minecraft Modding → GitHub-Setup**.
-
 **Ownership**
 
-Copyright (c) 2026 MechGaming. **All rights reserved.**
+Copyright © 2026 MechGaming. All rights reserved.
 
-You can look through the code here. Reusing, modifying, or redistributing my original Settlements code and content needs my written permission, except where the law or GitHub's terms allow it. Don't copy it and claim it's your own work.
+This repository is source-available for viewing only. No permission is granted to copy, redistribute, modify, reupload, publish, or include this mod or its assets in modpacks or derivative projects without explicit written permission.
 
-GitHub still allows viewing and forking public repositories under its terms. Minecraft art, Forge, and other third-party materials keep their own licenses. See [the full notice](LICENSE).
+See [LICENSE](LICENSE).

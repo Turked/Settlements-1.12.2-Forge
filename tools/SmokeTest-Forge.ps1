@@ -1,9 +1,9 @@
 param(
     [string]$ModJar = '',
-    [string]$JavaHome = 'C:\Users\Owner\.gradle\jdks\jdk8u504-b01',
-    [string]$MinecraftInstall = 'C:\Users\Owner\curseforge\minecraft\Install',
-    [string]$ServerJar = 'C:\Users\Owner\.gradle\caches\forge_gradle\mcp_repo\de\oceanlabs\mcp\mcp_config\1.12.2\joined\downloadServer\server.jar',
-    [string]$RLCraftInstance = 'C:\Users\Owner\curseforge\minecraft\Instances\RLCraft',
+    [string]$JavaHome = (Join-Path $env:USERPROFILE '.gradle\jdks\jdk8u504-b01'),
+    [string]$MinecraftInstall = (Join-Path $env:USERPROFILE 'curseforge\minecraft\Install'),
+    [string]$ServerJar = (Join-Path $env:USERPROFILE '.gradle\caches\forge_gradle\mcp_repo\de\oceanlabs\mcp\mcp_config\1.12.2\joined\downloadServer\server.jar'),
+    [string]$RLCraftInstance = (Join-Path $env:USERPROFILE 'curseforge\minecraft\Instances\RLCraft'),
     [switch]$WithRLCraft,
     [ValidateRange(10, 120)][int]$TimeoutSeconds = 120
 )

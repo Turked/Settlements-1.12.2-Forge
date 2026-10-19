@@ -9,6 +9,5 @@
 - Added optional tagged raids, explicit blueprints, inventory repair and bounded event restoration.
 - Added consensual war rosters, lives/bed objectives, inventory wagers, annexation and scoped ghost protection.
 - Added persistence/network/policy checks and an isolated Forge 2860 lifecycle harness.
-- Added Obsidian procedures and numbered feature notes in the supplied vault, preserving empty brainstorming notes.
 
 Full live-world RLCraft and multiplayer release checks remain listed in `docs/Verification.md`.

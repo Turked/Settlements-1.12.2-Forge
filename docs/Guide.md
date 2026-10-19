@@ -32,10 +32,6 @@ Inside an established settlement, press **K** to open that settlement's menu, in
 
 The **Settlements** and boundary keys are rebindable under Controls → Settlements. K/J may conflict with RLCraft bindings: assign a unique key in your profile as needed. F keeps its vanilla offhand action. K, Q, Escape, inventory/chat keys, death, world/dimension changes and inventory changes exit planner mode. The planner hides requested vanilla HUD elements; it leaves other mods' custom HUDs alone.
 
-## Work across devices
-
-The GitHub setup instructions are kept in the Obsidian vault under **Minecraft Modding → GitHub-Setup**. External Obsidian notes and the Settlements_Assets folder need their own sync.
-
 ## Administration and zones
 
 Operators with permission level 2 can use `/give @p settlements:dev_tool`. Right-click two loaded corners to create a rectangular zone. Left-click cycles build/spawn zones; sneaking cycles allow/restrict. Right-click air opens the current zone settings, and sneak-right-click opens live mod settings. The command alternatives are available through `/settlements help`.
