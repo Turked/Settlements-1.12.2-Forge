@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "settlements",
+  "pattern": [
+    "WW ",
+    "WWS",
+    "  S"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wool",
+      "data": 32767
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "settlements:settlement_flag",
+    "count": 1
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "settler",
+  "name": "Settler",
+  "minRoomVolume": 8,
+  "maxRoomVolume": 512,
+  "requiredBlocks": {
+    "minecraft:bed": 1,
+    "minecraft:chest": 1,
+    "minecraft:wooden_door": 1
+  },
+  "trades": [
+    {
+      "buy": "minecraft:emerald",
+      "buyCount": 1,
+      "sell": "minecraft:bread",
+      "sellCount": 3,
+      "uses": 12
+    }
+  ],
+  "structureBlocks": []
+}

@@ -1,0 +1,180 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+    }
+}
+        
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+version = '0.1.0'
+group = 'com.mechgaming.settlements'
+archivesBaseName = 'Settlements'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+minecraft {
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    //mappings channel: 'snapshot', version: '20171003-1.12'
+    mappings channel: 'snapshot', version: '20171003-1.12'
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+dependencies {
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2864'
+
+    // You may put jars on which you depend on in ./libs or you may define them like so..
+    // compile "some.group:artifact:version:classifier"
+    // compile "some.group:artifact:version"
+
+    // Real examples
+    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
+    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // These dependencies get remapped to your current MCP mappings
+    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // For more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "Settlements",
+            "Specification-Vendor": "MechGaming",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": "Settlements",
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"MechGaming"
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar') 
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+//publish.dependsOn('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+// FML does not support loading exploded directories as mods.
+// Eclipse works fine because it merges classes and resources when debugging
+// IntelliJ used to work because FG2 forced the files to be jared during debugging.
+// Since FG3+ doesn't do that, we need to merge the sourcesets from gradle's side.
+sourceSets.each {
+    def dir = layout.buildDirectory.file("sourcesSets/$it.name").get().asFile
+    it.output.resourcesDir = dir
+    it.java.outputDir = dir
+}
+
+// Forge 1.12.2 has no modern DataGenerator API. This isolated Java 8 source set
+// generates the legacy resource formats without launching Minecraft.
+sourceSets {
+    datagen { java.srcDir 'src/datagen/java' }
+    main { resources.srcDir 'src/generated/resources' }
+}
+
+task generateResources(type: JavaExec) {
+    group = 'settlements'
+    description = 'Generate Settlements metadata, recipes, placeholder references and language files.'
+    dependsOn datagenClasses
+    classpath = sourceSets.datagen.runtimeClasspath
+    main = 'com.mechgaming.settlements.datagen.SettlementsDataGenerator'
+    args file('src/generated/resources').absolutePath, project.version.toString()
+    inputs.files(sourceSets.datagen.allJava)
+    inputs.property('modVersion', project.version.toString())
+    outputs.dir file('src/generated/resources')
+}
+
+task runData { group = 'settlements'; description = 'Alias for the legacy DataGen entry point.'; dependsOn generateResources }
+
+processResources {
+    dependsOn generateResources
+    // Artist-supplied overrides in src/main/resources take precedence.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+task verifyGeneratedResources(type: JavaExec) {
+    group = 'verification'
+    dependsOn generateResources
+    classpath = sourceSets.datagen.runtimeClasspath
+    main = 'com.mechgaming.settlements.datagen.SettlementsDataGenerator'
+    args file('src/generated/resources').absolutePath, project.version.toString(), '--verify'
+}
+check.dependsOn verifyGeneratedResources
+
+sourceSets {
+    verification {
+        java.srcDir 'src/verification/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+task verifySettlementState(type: JavaExec) {
+    group = 'verification'
+    description = 'Check claim geometry, persistent NBT round trips and packet validation without launching the game.'
+    dependsOn verificationClasses
+    classpath = sourceSets.verification.runtimeClasspath
+    main = 'com.mechgaming.settlements.verification.StateVerification'
+}
+check.dependsOn verifySettlementState
+
+// The generated metadata carries the actual version, so no token expansion is needed.
+jar { preserveFileTimestamps = false; reproducibleFileOrder = true }

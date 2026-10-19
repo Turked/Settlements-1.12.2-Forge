@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "settlements",
+    "name": "Settlements",
+    "description": "Player-founded settlements, configurable claims and zones, NPC housing, raids, blueprints and consensual wars.",
+    "version": "0.1.0",
+    "mcversion": "1.12.2",
+    "authorList": [
+      "MechGaming"
+    ],
+    "credits": "Built with Minecraft Forge. Placeholder artwork uses existing Minecraft assets.",
+    "url": "",
+    "updateUrl": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
