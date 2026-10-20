@@ -66,15 +66,19 @@ sourceSets {
     datagen { java.srcDir 'src/datagen/java' }
     main { resources.srcDir 'src/generated/resources' }
 }
+dependencies {
+    // Parse artist exports during DataGen; this is not bundled into the mod.
+    datagenImplementation 'com.google.code.gson:gson:2.8.0'
+}
 
 task generateResources(type: JavaExec) {
     group = 'settlements'
-    description = 'Generate Settlements metadata, recipes, placeholder references and language files.'
+    description = 'Generate Settlements metadata, recipes, models and language files.'
     dependsOn datagenClasses
     classpath = sourceSets.datagen.runtimeClasspath
     main = 'com.MechGaming.settlements.datagen.SettlementsDataGenerator'
     args file('src/generated/resources').absolutePath, project.version.toString()
-    inputs.files(sourceSets.datagen.allJava)
+    inputs.files(sourceSets.datagen.allSource)
     inputs.property('modVersion', project.version.toString())
     outputs.dir file('src/generated/resources')
 }

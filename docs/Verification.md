@@ -2,7 +2,7 @@
 
 ## Automated checks
 
-- `generateResources` generates all mod-owned resource data from Java source.
+- `generateResources` generates mod-owned resource data from Java source and imports supplied artist model exports.
 - `verifyGeneratedResources` verifies deterministic output against the generator.
 - `verifySettlementState` exercises actual Minecraft compressed NBT and packet codecs: geometry edges, dimensions, claim identity, membership, inbox, proposal expiry/support, zones, whole-world reload, radius bounds, packet round trips and oversized request rejection.
 - `build` compiles with Java 8 against Forge 1.12.2 and reobfuscates the installable jar.
@@ -45,3 +45,11 @@ Compilation, mod initialization and model references do not establish live-world
 - The production jar contains 49 runtime classes under `com/MechGaming/settlements`, with no stale package paths, PowerShell, example-mod classes or test helpers.
 - The renamed production jar passed external Forge 2860 construction, pre-init, init and post-init validation with exit code 0. The check started no world or listener and did not test gameplay.
 - Personal tooling, lifecycle-test helpers and their output are stored outside the project. The project builds directly through the Gradle wrapper.
+
+## Flag model integration — 2026-10-19
+
+- Java 8 build and reobfuscation passed. All 55 existing state, policy, packet and consent checks passed.
+- DataGen verified nine deterministic resources, including eight JSON documents. Minecraft's actual 1.12 model parser accepted the supplied flag model; geometry, UVs, face rotations and supported display transforms match the artist export.
+- The supplied model export and red fabric PNG were copied unchanged. Only generated model references and unsupported legacy metadata were adapted; no new artwork was authored.
+- The headless texture check exercised Minecraft's resource-path resolver, custom sprite registration/loading and atlas stitcher with a neighboring vanilla oak sprite. It verified the runtime nearest-neighbor pixel mapping, mip-aligned dimensions, normalized UV coverage and separate atlas placement.
+- Actual GPU upload, mipmap rendering and the flag's appearance in the world, planner and inventory still require an in-game check. The interactive RLCraft and multiplayer checklist above remains open.

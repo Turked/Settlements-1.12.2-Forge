@@ -3,6 +3,7 @@ package com.MechGaming.settlements.verification;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.client.renderer.block.model.ModelBlock;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,8 +33,13 @@ public final class ResourceVerification {
             }
             if (path.toString().contains("models")) {
                 JsonObject model = json.getAsJsonObject();
-                require(!model.has("elements"), "No authored geometry");
-                require(model.get("parent").getAsString().startsWith("minecraft:"), "Models reuse existing vanilla parents");
+                if (path.endsWith(Paths.get("assets", "settlements", "models", "block", "settlement_flag.json"))) {
+                    verifyImportedFlag(model);
+                } else if (path.getParent().getFileName().toString().equals("item")) {
+                    require(!model.has("elements"), "Item models inherit their artwork");
+                    String parent = model.get("parent").getAsString();
+                    require(parent.startsWith("minecraft:") || parent.equals("settlements:block/settlement_flag"), "Item parent resolves to supplied or vanilla artwork");
+                }
             }
             if (path.toString().contains("recipes")) {
                 JsonObject recipe = json.getAsJsonObject();
@@ -43,9 +49,22 @@ public final class ResourceVerification {
         }
         require(parsed >= 6, "Generated JSON set present");
         ClassLoader loader = ResourceVerification.class.getClassLoader();
-        require(loader.getResource("assets/minecraft/models/block/white_wool.json") != null, "Vanilla wool model exists on actual Minecraft classpath");
+        require(loader.getResource("assets/minecraft/textures/blocks/log_oak.png") != null, "Vanilla oak side texture exists on actual Minecraft classpath");
+        require(loader.getResource("assets/settlements/textures/blocks/flag_fabric.png") != null, "Supplied flag fabric is packaged");
         require(loader.getResource("assets/minecraft/textures/items/blaze_rod.png") != null, "Vanilla tool texture exists on actual Minecraft classpath");
         System.out.println("Validated " + parsed + " generated JSON documents, metadata and actual vanilla asset references.");
+        FlagTextureVerification.run();
+    }
+    private static void verifyImportedFlag(JsonObject model) throws Exception {
+        JsonObject source = new JsonParser().parse(new String(Files.readAllBytes(Paths.get("src/datagen/resources/models/flag.json")), StandardCharsets.UTF_8)).getAsJsonObject();
+        require(model.get("elements").equals(source.get("elements")), "Flag geometry, UVs and face rotations match the artist export");
+        source.getAsJsonObject("display").remove("on_shelf");
+        require(model.get("display").equals(source.get("display")), "All supported artist display transforms are preserved");
+        require(!model.has("parent"), "Flag has no unresolved/self-referencing parent");
+        ModelBlock legacyModel = ModelBlock.deserialize(model.toString());
+        require(legacyModel.getElements().size() == 2, "Actual Minecraft 1.12 model parser accepts the two supplied elements");
+        require(legacyModel.resolveTextureName("1").equals("minecraft:blocks/log_oak"), "Pole uses the vanilla oak side");
+        require(legacyModel.resolveTextureName("2").equals("settlements:blocks/flag_fabric"), "Cloth uses supplied red fabric");
     }
     private static void require(boolean condition, String message) { if (!condition) throw new AssertionError(message); }
 }

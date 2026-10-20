@@ -3,6 +3,7 @@ package com.MechGaming.settlements.client;
 import com.MechGaming.settlements.Settlements;
 import com.MechGaming.settlements.common.CommonProxy;
 import com.MechGaming.settlements.features.EntitySettler;
+import com.MechGaming.settlements.client.texture.FlagFabricSprite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderVillager;
@@ -10,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -59,6 +61,12 @@ public final class ClientProxy extends CommonProxy {
 
     @Mod.EventBusSubscriber(modid = Settlements.MODID, value = Side.CLIENT)
     public static final class Models {
+        @SubscribeEvent
+        public static void registerTextures(TextureStitchEvent.Pre event) {
+            if (event.getMap() != Minecraft.getMinecraft().getTextureMapBlocks()) return;
+            event.getMap().setTextureEntry(new FlagFabricSprite());
+        }
+
         @SubscribeEvent
         public static void register(ModelRegistryEvent event) {
             registerItem("settlement_flag");

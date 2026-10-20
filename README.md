@@ -38,7 +38,7 @@ Raids and wars are off by default. Xaero's map support is on hold for now.
 
 Still in development. Recorded build, automated check, and isolated RLCraft loading results are in the [verification record](docs/Verification.md). Full in-game and multiplayer testing is still needed.
 
-The flag, tools, and NPCs use existing Minecraft art for now. Those references can be swapped out when the final assets are ready.
+The flag uses MechGaming's model with red banner fabric and an oak log pole. Tools and NPCs still use existing Minecraft art for now.
 
 **Working on the mod**
 
@@ -52,7 +52,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk8'
 
 The installable jar is `build/libs/Settlements-0.1.0.jar`; install the same jar on the server and clients.
 
-Resource files come from Java DataGen. Edit the generator and run `.\gradlew.bat runData` instead of editing generated JSON. The build also regenerates resources automatically.
+Resource files come from Java DataGen. Edit the generator and run `.\gradlew.bat runData` instead of editing generated JSON. The build also regenerates resources automatically. The flag's artist export is kept in `src/datagen/resources/models/flag.json`; DataGen imports it without changing the geometry, UVs or supported display positions.
 
 - [Setup, configuration, and feature details](docs/Guide.md)
 - [Testing checklist](docs/Verification.md)

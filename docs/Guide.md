@@ -17,7 +17,9 @@ The build creates `build/libs/Settlements-0.1.0.jar`, regenerates resources, and
 
 Minecraft 1.12.2 predates the modern Forge DataGenerator API and native item/block tags. `src/datagen/java/com/MechGaming/settlements/datagen/SettlementsDataGenerator.java` is the Java 8 DataGen entry point. It generates metadata, the flag recipe, item/model references, blockstates, `en_us.lang`, and a default NPC definition into `src/generated/resources`. Do not edit generated files. Edit the generator or provide an intentional override under `src/main/resources` instead. No unused tag files are generated.
 
-The generator references Minecraft's existing white wool model and blaze rod sprite. The `settlements:settler` entity extends the vanilla villager and uses its existing renderer and artwork, with definition-controlled trades. There are no original textures or 3D meshes. Finished runtime art overrides belong in `src/main/resources/assets/settlements`.
+The flag uses MechGaming's Blockbench export in `src/datagen/resources/models/flag.json`. DataGen preserves its elements, UVs and supported display transforms, resolves the pole to vanilla `minecraft:blocks/log_oak`, and resolves the fabric to the supplied PNG under `src/main/resources/assets/settlements/textures/blocks`. It removes the export's self-referencing parent and the unsupported `on_shelf` display context for Minecraft 1.12.2. A client sprite loader prepares the rectangular fabric at a power-of-two size in memory for Minecraft's mipmaps; the PNG file and normalized UVs stay unchanged. Replace the artist export and run `runData` when updating the model.
+
+The developer tool still references Minecraft's blaze rod sprite. The `settlements:settler` entity extends the vanilla villager and uses its existing renderer and artwork, with definition-controlled trades. Finished runtime art belongs in `src/main/resources/assets/settlements`; editable artwork stays outside the project.
 
 ## Start a settlement
 

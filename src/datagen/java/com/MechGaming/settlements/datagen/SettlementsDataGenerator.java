@@ -1,6 +1,11 @@
 package com.MechGaming.settlements.datagen;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,18 +19,18 @@ import java.util.Map;
 /** Deterministic Java 8 DataGen for Minecraft 1.12.2's legacy resource layouts. */
 public final class SettlementsDataGenerator {
     private final Map<String, String> resources = new LinkedHashMap<>();
-    private SettlementsDataGenerator(String version) {
+    private SettlementsDataGenerator(String version) throws IOException {
         json("mcmod.info", Arrays.asList(object(
             "modid", "settlements", "name", "Settlements",
             "description", "Player-founded settlements, configurable claims and zones, NPC housing, raids, blueprints and consensual wars.",
             "version", version, "mcversion", "1.12.2", "authorList", Arrays.asList("MechGaming"),
-            "credits", "Built with Minecraft Forge. Placeholder artwork uses existing Minecraft assets.",
+            "credits", "Built with Minecraft Forge. Flag model by MechGaming; Minecraft textures used for placeholders.",
             "url", "", "updateUrl", "", "logoFile", "", "screenshots", new ArrayList<>(), "dependencies", new ArrayList<>())));
         json("pack.mcmeta", object("pack", object("description", "Settlements resources by MechGaming", "pack_format", 3)));
 
-        // References to existing vanilla models only. No geometry or textures are authored.
-        json("assets/settlements/blockstates/settlement_flag.json", object("variants", object("normal", object("model", "minecraft:white_wool"))));
-        json("assets/settlements/models/item/settlement_flag.json", object("parent", "minecraft:block/white_wool"));
+        importFlagModel();
+        json("assets/settlements/blockstates/settlement_flag.json", object("variants", object("normal", object("model", "settlements:settlement_flag"))));
+        json("assets/settlements/models/item/settlement_flag.json", object("parent", "settlements:block/settlement_flag"));
         json("assets/settlements/models/item/dev_tool.json", object("parent", "minecraft:item/generated", "textures", object("layer0", "minecraft:items/blaze_rod")));
         json("assets/settlements/recipes/settlement_flag.json", object(
             "type", "minecraft:crafting_shaped", "group", "settlements",
@@ -53,6 +58,26 @@ public final class SettlementsDataGenerator {
             "trades", Arrays.asList(object("buy", "minecraft:emerald", "buyCount", 1, "sell", "minecraft:bread", "sellCount", 3, "uses", 12)),
             "structureBlocks", new ArrayList<>()));
 
+    }
+
+    /** Convert the artist's export to legacy resource names without changing geometry or UVs. */
+    private void importFlagModel() throws IOException {
+        InputStream source = SettlementsDataGenerator.class.getResourceAsStream("/models/flag.json");
+        if (source == null) throw new IOException("Missing artist model export: models/flag.json");
+        JsonObject model;
+        try (InputStreamReader reader = new InputStreamReader(source, StandardCharsets.UTF_8)) {
+            model = new JsonParser().parse(reader).getAsJsonObject();
+        }
+        // The export's parent points back to itself; the supplied elements are standalone.
+        model.remove("parent");
+        model.remove("format_version");
+        model.getAsJsonObject("display").remove("on_shelf"); // Not a Minecraft 1.12 display context.
+        JsonObject textures = model.getAsJsonObject("textures");
+        textures.addProperty("1", "minecraft:blocks/log_oak");
+        textures.addProperty("2", "settlements:blocks/flag_fabric");
+        textures.addProperty("particle", "settlements:blocks/flag_fabric");
+        resources.put("assets/settlements/models/block/settlement_flag.json",
+            new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(model) + "\n");
     }
 
     public static void main(String[] args) throws IOException {
